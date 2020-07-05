@@ -427,7 +427,7 @@ class Damier:
             Il faut donc prendre la valeur x, et y des deux arguments et en crée des tuples."""
         return (
             # Vérifier si la piece est du couleur noir ou blanc
-            (couleur != "noir" or couleur != "blanc")
+            (couleur == "noir" or couleur == "blanc")
         )
 
     def piece_de_couleur_peut_faire_une_prise(self, couleur):
@@ -444,7 +444,7 @@ class Damier:
             bool: True si une pièce de la couleur reçue peut faire un saut (une prise), False autrement.
         """
         #TODO: À compléter
-        if couleur != "noir" or couleur != "blanc":
+        if couleur == "noir" or couleur == "blanc":
             return False
         else:
             return True
