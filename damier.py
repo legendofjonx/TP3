@@ -313,27 +313,30 @@ class Damier:
         positions_diag_quatre_y = positions_diag_quatre.colonne
         positions_diag_quatre_tuple = (positions_diag_quatre_x, positions_diag_quatre_y)
 
+        #On verifie en premier si la piece est dans le jeu dames
+        if (position_piece_x >= 0 and position_piece_x <= 8) and (position_piece_y >= 0 and position_piece_y <= 8):
 
+            #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
+            if position_piece_tuple == positions_diag_un_tuple:
+                return False #Aucun déplacement s'est effectué
 
-        #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
-        if position_piece_tuple == positions_diag_un_tuple:
-            return False #Aucun déplacement s'est effectué
+            #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
+            elif position_piece_tuple == positions_diag_deux_tuple:
+                return False
 
-        #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
-        elif position_piece_tuple == positions_diag_deux_tuple:
-            return False
+            #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
+            elif position_piece_tuple == positions_diag_trois_tuple:
+                return False
 
-        #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
-        elif position_piece_tuple == positions_diag_trois_tuple:
-            return False
+            #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
+            elif position_piece_tuple == positions_diag_quatre_tuple:
+                return False
 
-        #Une pièce ne peut pas déplacer vers une case qui est déjà occupée par une autre pièce.
-        elif position_piece_tuple == positions_diag_quatre_tuple:
-            return False
-
+            else:
+                #peut se déplacer dans toutes les directions sans faire de saut
+                return True
         else:
-            #peut se déplacer dans toutes les directions sans faire de saut
-            return True
+            return False
 
 
     def piece_peut_faire_une_prise(self, position_piece):
@@ -427,10 +430,8 @@ class Damier:
         # Récupérer les valeurs x et y de la position
         """On ne peut pas comparer position_piece à position_tuple car la classe Position n'est pas iterable
             Il faut donc prendre la valeur x, et y des deux arguments et en crée des tuples."""
-        if couleur == "noir" or couleur == "blanc":
-            return True
-        else:
-            return False
+        return (couleur == "noir" or couleur == "blanc")
+
 
     def piece_de_couleur_peut_faire_une_prise(self, couleur):
         """Vérifie si n'importe quelle pièce d'une certaine couleur reçue en argument a la possibilité de faire un
@@ -446,11 +447,7 @@ class Damier:
             bool: True si une pièce de la couleur reçue peut faire un saut (une prise), False autrement.
         """
         #TODO: À compléter
-        if couleur == "noir" or couleur == "blanc":
-            return True
-        else:
-            return False
-
+        return (couleur == "noir" or couleur == "blanc")
 
     def deplacer(self, position_source, position_cible):
         """Effectue le déplacement sur le damier. Si le déplacement est valide, on doit mettre à jour le dictionnaire
@@ -526,22 +523,24 @@ class Damier:
         comparaison_y =  2 <=position_cible_tuple[1]-position_piece_tuple[1] < 3
         peut_deplacer = comparaison_x and comparaison_y
 
-        # Vérifie si la pièce peut sauter vers la position cible
+        #On vérifie en premier si les coordonnées d'une position sont dans les bornes du damier
+        if (position_piece_x >= 0 and position_piece_x <= 8) and (position_piece_y >= 0 and position_piece_y <= 8)\
+               and (position_cible_x >= 0 and position_cible_x <= 8) and (position_cible_x >= 0 and position_cible_x <= 8):
 
+            #Tentative de deplacement
+            #On vérifie en premier si le joueur peut faire un déplacement avec prise
+            if peut_deplacer == True:
+                self.cases.update({position_cible: Piece("blanc", "pion")})
+                return "prise"  #Une pièce adverse a été prise
 
+            #Le déplacement a été effectué sans prise
+            elif ((position_piece_y + 1) == position_cible_y or (position_piece_y - 1) == position_cible_y) and (
+                (position_piece_x + 1) == position_cible_x or (position_piece_y - 1) == position_cible_x):
+                self.cases.update({position_cible: Piece("blanc", "pion")})
+                return "ok"
 
-        #On vérifie en premier si le joueur peut faire un déplacement avec prise
-        #Une pièce adverse a été prise
-        if peut_deplacer == True:
-            self.cases.update({position_cible: Piece("blanc", "pion")})
-            return "prise"
-
-        #Le déplacement a été effectué sans prise
-        elif ((position_piece_y + 1) == position_cible_y or (position_piece_y - 1) == position_cible_y) and (
-            (position_piece_x + 1) == position_cible_x or (position_piece_y - 1) == position_cible_x):
-            self.cases.update({position_cible: Piece("blanc", "pion")})
-            return "ok"
-
+            else:
+                return "erreur"
         else:
             return "erreur"
 
@@ -604,9 +603,18 @@ if __name__ == "__main__":
     assert un_damier.piece_de_couleur_peut_se_deplacer(la_piece) == True
 
     #Deplacement
+
+    #On vérifie en premier si les coordonnées d'une position sont dans les bornes du damier
+    assert un_damier.deplacer(Position(3, 3), Position(9, 5)) == "erreur"
+    assert un_damier.deplacer(Position(-1, 3), Position(4, 4)) == "erreur"
+
+
+    #Tentative de deplacement
     assert un_damier.deplacer(Position(3, 3), Position(4, 4)) == "ok"
     assert un_damier.deplacer(Position(3, 3), Position(8, 8)) == "erreur"
     assert un_damier.deplacer(Position(5, 3), Position(7, 5)) == "prise"
+
+
 
     print('Test unitaires passés avec succès!')
 
