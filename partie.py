@@ -57,6 +57,9 @@ class Partie:
 
         """
         #TODO: À compléter
+        return (
+        #position_source in self.cases
+        )
 
     def position_cible_valide(self, position_cible):
         """Vérifie si la position cible est valide (en fonction de la position source sélectionnée). Doit non seulement
@@ -69,7 +72,21 @@ class Partie:
                 a pas d'erreur).
 
         """
+
         #TODO: À compléter
+        # On vérifie en premier si la position sont dans les bornes du damier et qu'elle est valide
+        # On retour une Booléenne et on indique si la position cible
+        if (Damier.piece_peut_se_deplacer(self,position_cible)):
+            valide_str = ""
+            valide = True
+            return [valide, valide_str]
+
+        else:
+            valide_str = "erreur"
+            valide = False
+            return [valide, valide_str]
+
+
 
     def demander_positions_deplacement(self):
         """Demande à l'utilisateur les positions sources et cible, et valide ces positions. Cette méthode doit demander
@@ -81,7 +98,19 @@ class Partie:
             Position, Position: Un couple de deux positions (source et cible).
 
         """
+
+
         #TODO: À compléter
+
+        # On veut convertir la réponse de l'utilisateur en tuple
+        # On ne valide pas l'input de l'utilisateur
+        position_source = tuple(
+            [eval(i) for i in input("Veuillez entrer les coordonnées de votre position source (ex. 3,3): ").split(',')])
+
+        position_cible = tuple(
+            map(int, input("Veuillez entrer les coordonnées de votre position cible (ex. 5,5): ").split(',')))
+
+        return position_source, position_cible
 
     def tour(self):
         """Cette méthode effectue le tour d'un joueur, et doit effectuer les actions suivantes:
@@ -115,6 +144,7 @@ class Partie:
 
         # Demander les positions
         # TODO: À compléter
+        self.position_source_selectionnee
 
         # Effectuer le déplacement (à l'aide de la méthode du damier appropriée)
         # TODO: À compléter
@@ -130,14 +160,15 @@ class Partie:
             str: La couleur du joueur gagnant.
         """
 
-        while self.damier.piece_de_couleur_peut_se_deplacer(self.couleur_joueur_courant) or \
-                self.damier.piece_de_couleur_peut_faire_une_prise(self.couleur_joueur_courant):
-            self.tour()
+        # while self.damier.piece_de_couleur_peut_se_deplacer(self.couleur_joueur_courant) or \
+        #         self.damier.piece_de_couleur_peut_faire_une_prise(self.couleur_joueur_courant):
+        #     self.tour()
+        #
+        # if self.couleur_joueur_courant == "blanc":
+        #     return "noir"
+        # else:
+        #     return "blanc"
 
-        if self.couleur_joueur_courant == "blanc":
-            return "noir"
-        else:
-            return "blanc"
 
 
 
@@ -145,4 +176,12 @@ if __name__ == "__main__":
     # Point d'entrée du programme. On initialise une nouvelle partie, et on appelle la méthode jouer().
     partie = Partie()
     gagnant = partie.jouer()
+
+    valide_str = ""
+    valide_bool_true = True
+    valide_bool_false = False
+    pas_valide = "erreur"
+
+    assert partie.position_cible_valide(Position(4,5)) == [valide_bool_true, valide_str]
+    assert partie.position_cible_valide(Position(4,12)) == [valide_bool_false, pas_valide]
 
