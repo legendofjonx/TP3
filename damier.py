@@ -445,9 +445,9 @@ class Damier:
         """
         #TODO: À compléter
         if couleur == "noir" or couleur == "blanc":
-            return False
-        else:
             return True
+        else:
+            return False
 
 
     def deplacer(self, position_source, position_cible):
