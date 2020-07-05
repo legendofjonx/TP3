@@ -4,6 +4,7 @@ from piece import Piece
 from position import Position
 
 
+
 class Damier:
     """Plateau de jeu d'un jeu de dames. Contient un ensemble de pièces positionnées à une certaine position
     sur le plateau.
@@ -25,6 +26,7 @@ class Damier:
         """
         self.n_lignes = 8
         self.n_colonnes = 8
+
 
         self.cases = {
             Position(7, 0): Piece("blanc", "pion"),
@@ -249,8 +251,8 @@ class Damier:
 
         else:
             """ Une pièce ne peut que sauter de deux cases en diagonale"""
-            comparaison_x = 1 <= position_cible_tuple[0]-position_piece_tuple[0] < 2
-            comparaison_y =  1 <=position_cible_tuple[1]-position_piece_tuple[1] < 2
+            comparaison_x = 2 <= position_cible_tuple[0]-position_piece_tuple[0] < 3
+            comparaison_y =  2 <=position_cible_tuple[1]-position_piece_tuple[1] < 3
             peut_deplacer = comparaison_x and comparaison_y
 
             # Vérifie si la pièce peut sauter vers la position cible
@@ -425,10 +427,10 @@ class Damier:
         # Récupérer les valeurs x et y de la position
         """On ne peut pas comparer position_piece à position_tuple car la classe Position n'est pas iterable
             Il faut donc prendre la valeur x, et y des deux arguments et en crée des tuples."""
-        return (
-            # Vérifier si la piece est du couleur noir ou blanc
-            (couleur == "noir" or couleur == "blanc")
-        )
+        if couleur == "noir" or couleur == "blanc":
+            return True
+        else:
+            return False
 
     def piece_de_couleur_peut_faire_une_prise(self, couleur):
         """Vérifie si n'importe quelle pièce d'une certaine couleur reçue en argument a la possibilité de faire un
@@ -520,23 +522,28 @@ class Damier:
 
 
         """ Une pièce ne peut que sauter de deux cases en diagonale"""
-        comparaison_x = 1 <= position_cible_tuple[0]-position_piece_tuple[0] < 2
-        comparaison_y =  1 <=position_cible_tuple[1]-position_piece_tuple[1] < 2
+        comparaison_x = 2 <= position_cible_tuple[0]-position_piece_tuple[0] < 3
+        comparaison_y =  2 <=position_cible_tuple[1]-position_piece_tuple[1] < 3
         peut_deplacer = comparaison_x and comparaison_y
 
         # Vérifie si la pièce peut sauter vers la position cible
 
 
 
-
-
+        #On vérifie en premier si le joueur peut faire un déplacement avec prise
+        #Une pièce adverse a été prise
         if peut_deplacer == True:
             self.cases.update({position_cible: Piece("blanc", "pion")})
-            print(self.cases)
             return "prise"
+
+        #Le déplacement a été effectué sans prise
+        elif ((position_piece_y + 1) == position_cible_y or (position_piece_y - 1) == position_cible_y) and (
+            (position_piece_x + 1) == position_cible_x or (position_piece_y - 1) == position_cible_x):
+            self.cases.update({position_cible: Piece("blanc", "pion")})
+            return "ok"
+
         else:
             return "erreur"
-
 
 
 
@@ -589,23 +596,17 @@ if __name__ == "__main__":
     assert un_damier.piece_peut_se_deplacer_vers(Position(8, 8), Position(3, 3)) == False
 
     # Test unitaire pour piece_peut_sauter_vers(self, position_piece, position_cible)
-    assert un_damier.piece_peut_sauter_vers(Position(3, 4), Position(4, 5)) == True
+    assert un_damier.piece_peut_sauter_vers(Position(3, 3), Position(5, 5)) == True
     assert un_damier.piece_peut_sauter_vers(Position(3, 4), Position(4, 4)) == False
 
     un_piece = Piece('blanc', "pion")
     la_piece = un_piece.couleur
-
     assert un_damier.piece_de_couleur_peut_se_deplacer(la_piece) == True
 
     #Deplacement
-    # assert un_damier.deplacer(Position(3, 3), Position(4, 4)) == True
-    # assert un_damier.deplacer(Position(3, 3), Position(2, 2)) == True
-    # # # La position cible ne se trouve pas à diagonale de la position actuelle
-    # assert un_damier.deplacer(Position(3, 3), Position(4, 3)) == False
-    # # # Une piece ne peut pas se trouver à l'extérieur du damier
-    # assert un_damier.deplacer(Position(3, 3), Position(8, 8)) == False
-    # assert un_damier.deplacer(Position(8, 8), Position(3, 3)) == False
-    # assert un_damier.deplacer(Position(3, 4), Position(4, 5)) == "prise"
+    assert un_damier.deplacer(Position(3, 3), Position(4, 4)) == "ok"
+    assert un_damier.deplacer(Position(3, 3), Position(8, 8)) == "erreur"
+    assert un_damier.deplacer(Position(5, 3), Position(7, 5)) == "prise"
 
     print('Test unitaires passés avec succès!')
 
